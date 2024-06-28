@@ -1,0 +1,171 @@
+/* livevideo.css */
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* General styling for the entire container */
+.image-background {
+  flex: 1;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* Styling for the bottom container holding caption and local video */
+.bottom-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+.capNCam {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: flex-end;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  padding-left: 4%;
+  padding-right: 4%;
+  gap: 2%;
+}
+
+/* Caption container styling */
+.capContainer {
+  margin-bottom: 10px;
+  color: white;
+  width: 60%;
+  max-height: 70px;
+  height: 70px;
+  overflow: scroll;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  box-sizing: border-box;
+  scrollbar-width: 0px;
+}
+
+.cap {
+  padding: 2px;
+  color: white;
+  font-size: 15;
+  overflow: hidden;
+}
+
+/* Local video container styling */
+.camContainer {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
+  height: 220%;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+/* Control container styling */
+.ControlContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  height: 10%;
+  overflow: hidden;
+}
+
+/* Microphone and camera control button styling */
+.micCallCamControl {
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+}
+
+.micControl,
+.camControl,
+.callControl {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+}
+
+.btn {
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  align-self: center;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  font-size: 30px;
+}
+
+.callBtn {
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 70px;
+  width: 70px;
+  align-self: center;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  font-size: 40px;
+  padding: 5px;
+}
+
+/* Remote video container styling */
+.remoteContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  z-index: 0;
+}
+
+.remoteVideoContainer {
+  width: 90%;
+  height: 70%;
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #9ee2f2;
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+.remote-video-container {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

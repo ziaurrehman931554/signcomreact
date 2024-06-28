@@ -1,38 +1,135 @@
-.App {
-  text-align: center;
+body,
+html,
+#root {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-container {
+  max-width: 500px;
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  background: url("./assets/background.png") no-repeat center center fixed;
+  background-size: cover;
 }
 
-.App-link {
-  color: #61dafb;
+.main-container {
+  background-color: rgba(0, 0, 0, 0.9);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.background-image {
+  background-color: black; /* Optional: add your background image if needed */
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.video-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.local-video,
+.remote-video {
+  width: 45%;
+  height: 45%;
+  background-color: black;
+  position: relative;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #099dfd);
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+#channelName {
+  display: block;
+  padding: 15px;
+  margin: 0 0 25px;
+  width: 50vw;
+  max-width: 500px;
+}
+
+.card button:hover {
+  border-color: #099dfd;
+  background-color: #099dfd;
+}
+
+#controlsToolbar {
+  bottom: 35px;
+  right: 35px;
+  position: fixed;
+  z-index: 99;
+}
+
+#mediaControls button {
+  margin: 0 5px 7.5px;
+  padding: 10px;
+}
+
+#mediaControls button:hover {
+  border-color: #099dfd;
+}
+
+#endConnection {
+  border-color: red;
+  opacity: 50%;
+}
+
+#endConnection:hover {
+  background-color: red;
+  border-color: white;
+  opacity: 100%;
+}
+
+#localVideo {
+  width: 50vw;
+  aspect-ratio: 16/9;
+  max-width: 480px;
+  min-width: 360px;
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  margin: 0;
+}
+
+#remoteVideoGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  /* justify-content: center; */
+  align-items: center;
+}
+
+.remote-video-container {
+  position: relative;
+  width: 25vw;
+  aspect-ratio: 4/3;
+  max-width: 720px;
+  min-width: 360px;
+  overflow: hidden;
 }

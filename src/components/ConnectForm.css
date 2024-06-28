@@ -1,0 +1,102 @@
+/* ConnectForm.css */
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding-top: 10%;
+  padding-bottom: 10%;
+}
+
+.form-card {
+  max-width: 600px;
+  height: 100%;
+  width: 100%;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50%;
+}
+
+.title {
+  font-size: 20px;
+  text-align: center;
+}
+
+.circle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 155px;
+  height: 155px;
+  border-radius: 50%;
+  background-color: #d9d9d9;
+}
+
+.circle img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  align-self: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.input {
+  min-width: 75%;
+  padding: 10px;
+  height: 27px;
+  margin: 10px 0;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  align-content: center;
+  text-align: center;
+  background-color: #d9d9d9;
+}
+
+.btn {
+  background-color: #5d94dd;
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 10px;
+  text-transform: uppercase;
+  width: 130px;
+}
+
+.btn:hover {
+  background-color: #5d95dddb;
+}
+
+.divider-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.divider {
+  display: flex;
+  justify-content: center;
+  width: 90%;
+  height: 3px;
+  background-color: #000000;
+  border-radius: 10px;
+  opacity: 35%;
+}

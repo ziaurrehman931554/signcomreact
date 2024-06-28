@@ -1,23 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { ConnectForm } from "./components/ConnectForm";
+import { LiveVideo } from "./components/LiveVideo";
+
+import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
+
+import "./App.css";
 
 function App() {
+  const navigate = useNavigate();
+  const agoraClient = useRTCClient(
+    AgoraRTC.createClient({ codec: "vp8", mode: "rtc" })
+  ); // Initialize Agora Client
+
+  const handleConnect = (channelName) => {
+    navigate(`/via/${channelName}`); // on form submit, navigate to new route
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main-container" style={{ height: window.innerHeight }}>
+      <div className="app-container">
+        <Routes>
+          <Route
+            path="/"
+            element={<ConnectForm connectToVideo={handleConnect} />}
+          />
+          <Route
+            path="/via/:channelName"
+            element={
+              <AgoraRTCProvider client={agoraClient}>
+                <LiveVideo />
+              </AgoraRTCProvider>
+            }
+          />
+        </Routes>
+      </div>
     </div>
   );
 }
