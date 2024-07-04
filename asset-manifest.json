@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/signcomreact/static/css/main.173fcc53.css",
-    "main.js": "/signcomreact/static/js/main.e169ee0e.js",
-    "static/js/453.58a86d60.chunk.js": "/signcomreact/static/js/453.58a86d60.chunk.js",
+    "main.css": "/signcomreact/static/css/main.e3ab40b1.css",
+    "main.js": "/signcomreact/static/js/main.f7447f4d.js",
+    "static/js/453.6f2fe795.chunk.js": "/signcomreact/static/js/453.6f2fe795.chunk.js",
     "static/media/background.png": "/signcomreact/static/media/background.29dfbe08f5ae82bf21f1.png",
     "static/media/join.png": "/signcomreact/static/media/join.3f4ff8737f20bd1c7c9b.png",
     "index.html": "/signcomreact/index.html",
-    "main.173fcc53.css.map": "/signcomreact/static/css/main.173fcc53.css.map",
-    "main.e169ee0e.js.map": "/signcomreact/static/js/main.e169ee0e.js.map",
-    "453.58a86d60.chunk.js.map": "/signcomreact/static/js/453.58a86d60.chunk.js.map"
+    "main.e3ab40b1.css.map": "/signcomreact/static/css/main.e3ab40b1.css.map",
+    "main.f7447f4d.js.map": "/signcomreact/static/js/main.f7447f4d.js.map",
+    "453.6f2fe795.chunk.js.map": "/signcomreact/static/js/453.6f2fe795.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.173fcc53.css",
-    "static/js/main.e169ee0e.js"
+    "static/css/main.e3ab40b1.css",
+    "static/js/main.f7447f4d.js"
   ]
 }
