@@ -1,4 +1,9 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  useNavigate,
+  BrowserRouter as Router,
+} from "react-router-dom";
 import { ConnectForm } from "./components/ConnectForm";
 import { LiveVideo } from "./components/LiveVideo";
 
@@ -22,24 +27,26 @@ function App() {
   };
 
   return (
-    <div className="main-container" style={{ height: window.innerHeight }}>
-      <div className="app-container">
-        <Routes>
-          <Route
-            path="/"
-            element={<ConnectForm connectToVideo={handleConnect} />}
-          />
-          <Route
-            path="/via/:channelName"
-            element={
-              <AgoraRTCProvider client={agoraClient}>
-                <LiveVideo option={selectedOption} />
-              </AgoraRTCProvider>
-            }
-          />
-        </Routes>
+    <Router basename={process.env.PUBLIC_URL}>
+      <div className="main-container" style={{ height: window.innerHeight }}>
+        <div className="app-container">
+          <Routes>
+            <Route
+              path="/"
+              element={<ConnectForm connectToVideo={handleConnect} />}
+            />
+            <Route
+              path="/via/:channelName"
+              element={
+                <AgoraRTCProvider client={agoraClient}>
+                  <LiveVideo option={selectedOption} />
+                </AgoraRTCProvider>
+              }
+            />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 
