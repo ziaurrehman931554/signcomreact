@@ -1,5 +1,4 @@
 {
-  "homepage": "https://ziaurrehman931554.github.io/signcomreact",
   "name": "signcomreact",
   "version": "0.1.0",
   "private": true,
@@ -9,10 +8,14 @@
     "@testing-library/user-event": "^13.5.0",
     "agora-rtc-react": "^2.2.0",
     "agora-rtc-sdk-ng": "^4.10.0",
+    "agora-rtm-react": "^1.1.2",
+    "agora-rtm-sdk": "^2.1.10",
+    "html2canvas": "^1.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.0",
     "react-scripts": "5.0.1",
+    "react-speech-recognition": "^3.10.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

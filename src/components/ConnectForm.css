@@ -4,10 +4,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   height: 100%;
   width: 100%;
-  padding-top: 10%;
-  padding-bottom: 10%;
 }
 
 .form-card {
@@ -68,19 +67,23 @@ form {
   background-color: #d9d9d9;
 }
 
-.btn {
+.button {
   background-color: #5d94dd;
   color: black;
-  padding: 10px 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: none;
-  border-radius: 50px;
+  border-radius: 20px;
   cursor: pointer;
   margin-top: 10px;
+  height: 20px;
   text-transform: uppercase;
   width: 130px;
 }
 
-.btn:hover {
+.button:hover {
   background-color: #5d95dddb;
 }
 
@@ -99,4 +102,64 @@ form {
   background-color: #000000;
   border-radius: 10px;
   opacity: 35%;
+}
+
+.options-effect {
+  background-color: #1b14147c;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.options-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgb(224, 224, 224);
+  width: 90%;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  z-index: 1000; /* Ensure it's on top */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.option-button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.option-button:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: red;
+  color: black;
+  padding: 7px;
+  border-radius: 5px;
+  width: 80%;
+  font-weight: bold;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.error-message.show {
+  opacity: 1;
 }

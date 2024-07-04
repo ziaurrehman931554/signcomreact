@@ -5,6 +5,7 @@ import { LiveVideo } from "./components/LiveVideo";
 import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
 
 import "./App.css";
+import { useState } from "react";
 
 function App() {
   const navigate = useNavigate();
@@ -12,7 +13,11 @@ function App() {
     AgoraRTC.createClient({ codec: "vp8", mode: "rtc" })
   ); // Initialize Agora Client
 
-  const handleConnect = (channelName) => {
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const handleConnect = (channelName, option) => {
+    console.log("==========================Received option: ", option);
+    setSelectedOption(option);
     navigate(`/via/${channelName}`); // on form submit, navigate to new route
   };
 
@@ -28,7 +33,7 @@ function App() {
             path="/via/:channelName"
             element={
               <AgoraRTCProvider client={agoraClient}>
-                <LiveVideo />
+                <LiveVideo option={selectedOption} />
               </AgoraRTCProvider>
             }
           />

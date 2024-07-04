@@ -53,7 +53,7 @@ html {
   width: 60%;
   max-height: 70px;
   height: 70px;
-  overflow: scroll;
+  overflow: hidden;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   box-sizing: border-box;
@@ -64,6 +64,8 @@ html {
   padding: 2px;
   color: white;
   font-size: 15;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -168,4 +170,16 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.test {
+  display: flex;
+  position: absolute;
+  top: 10;
+  left: 10;
+  width: 50%;
+  height: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  overflow: hidden;
 }
