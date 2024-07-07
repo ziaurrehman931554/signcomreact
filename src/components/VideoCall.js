@@ -40,15 +40,23 @@ export const VideoCall = ({ option }) => {
   // to leave the call
   const navigate = useNavigate();
 
+  window.addEventListener("error", function (event) {
+    if (event.message.includes("ERR_BLOCKED_BY_CLIENT")) {
+      // Suppress the error
+      event.preventDefault();
+    }
+  });
+
   const handleCaption = (cap) => {
     setCaption(cap);
-    console.log("===========================", "updated caption: ", cap);
   };
 
   useEffect(() => {
     if (option === "gesture") {
       intervalRef.current = setInterval(() => {
-        takeScreenshot();
+        if (gestureRecognizer) {
+          takeScreenshot();
+        }
       }, 1000);
       return () => clearInterval(intervalRef.current);
     }
@@ -65,12 +73,11 @@ export const VideoCall = ({ option }) => {
           const recognizer = await GestureRecognizer.createFromOptions(vision, {
             baseOptions: {
               modelAssetPath:
-                "https://cvws.icloud-content.com/B/AfTB0ta39S9FrhRC0NKwLRe09idfAakwCDjuZAp8bpPMghZqAGDohNAn/gesture_recognizer.task?o=AiWR6nrGAiaL-_PFnK1UI7CdbEI5CIESDIJ5c-GXKkmN&v=1&x=3&a=CAogoEvtz2Jw0-O309SCssZOp3HgpDauEan0E8-aLJ9rPuESbxC7qpvfhzIYu4f34IcyIgEAUgS09idfWgTohNAnaidtOeKQl8Wzjk4G3urlRc2FhPN1S7DYbU-eP0kkT8lF5OAjlyyD9DlyJwiFz34dHGHpd0-Le06CslG-juTKfTOdcq6GxMHZycalA7CwN83Szw&e=1720069243&fl=&r=89cb38c0-9dde-4426-ae56-9b57e68cbeb2-1&k=smNDDkxlMymp0JCsjk2uHw&ckc=com.apple.clouddocs&ckz=com.apple.CloudDocs&p=157&s=N1jfzgDrVtHK39ros3ojRcTwBx0",
+                "https://raw.githubusercontent.com/ziaurrehman931554/modelfile/main/gesture_recognizer_final.task",
               delegate: "CPU",
             },
             runningMode: "IMAGE",
           });
-
           setGestureRecognizer(recognizer);
           setIsModelLoaded(true);
         } catch (error) {
@@ -115,10 +122,7 @@ export const VideoCall = ({ option }) => {
 
     img.onload = async () => {
       const results = await gestureRecognizer.recognize(img);
-      console.log(
-        "=========================================== results",
-        results
-      );
+      console.log("====================== results", results);
       if (results.gestures.length > 0) {
         const categoryName = results.gestures[0][0].categoryName;
         handleCaption(categoryName);
@@ -135,11 +139,12 @@ export const VideoCall = ({ option }) => {
 
   useEffect(() => {
     if (option === "speech") {
+      console.log("========================initializing speech");
       if (SpeechRecognition.browserSupportsSpeechRecognition()) {
         SpeechRecognition.startListening({ continuous: true });
         console.log("========================listning started");
       } else {
-        console.log("=======================speech recognition not supported");
+        console.log("========================speech recognition not supported");
       }
 
       return () => {
@@ -150,8 +155,8 @@ export const VideoCall = ({ option }) => {
   }, []);
 
   useEffect(() => {
-    console.log("==================transcription changed", transcript);
     if (transcript && option === "speech") {
+      console.log("==================transcription changed", transcript);
       handleCaption(transcript);
     }
   }, [transcript]);
