@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -8,6 +9,7 @@ import {
   useLocalCameraTrack,
   useLocalMicrophoneTrack,
   usePublish,
+  useCurrentUID,
   // useRemoteAudioTracks,
   useRemoteUsers,
   // useRemoteVideoTracks,
@@ -21,36 +23,102 @@ import {
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import {
+  Chat,
+  Channel,
+  MessageList,
+  Window,
+  useMessageNewListener,
+} from "stream-chat-react";
+import { StreamChat } from "stream-chat";
+
+const appId = "5d4f500c39834c95ae5a04635a3f0ab8";
+const streamApiKey = "67wrrf287xk9";
+let user = { id: null, name: null };
 
 export const VideoCall = ({ option }) => {
-  const appId = "5d4f500c39834c95ae5a04635a3f0ab8";
   const { channelName } = useParams();
   const [activeConnection, setActiveConnection] = useState(true);
+
   const [micOn, setMic] = useState(true);
   const [cameraOn, setCamera] = useState(true);
+
   const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
   const { localCameraTrack } = useLocalCameraTrack(cameraOn);
+
   const remoteContainerRef = useRef(null);
   const intervalRef = useRef(null);
-  const [caption, setCaption] = useState("This is whee caption displays!");
+
   const [gestureRecognizer, setGestureRecognizer] = useState(null);
   const [isModelLoaded, setIsModelLoaded] = useState(false);
+
+  const [caption, setCaption] = useState("This is whee caption displays!");
   const { transcript, resetTranscript } = useSpeechRecognition();
+
+  const [streamClient, setStreamClient] = useState(null);
+  const [streamChannel, setStreamChannel] = useState(null);
+
+  const [init, setInit] = useState(false);
+  const uid = useCurrentUID();
+
+  // assign agora current uid to user variable
+  useEffect(() => {
+    if (uid) {
+      console.log("===uid: ", uid);
+      user.id = `u${uid}`;
+      user.name = `User${uid}`;
+      setInit(true);
+    }
+  }, [useCurrentUID, uid]);
 
   // to leave the call
   const navigate = useNavigate();
 
+  // Suppress the error
   window.addEventListener("error", function (event) {
     if (event.message.includes("ERR_BLOCKED_BY_CLIENT")) {
-      // Suppress the error
       event.preventDefault();
     }
   });
 
+  // handle caption
   const handleCaption = (cap) => {
     setCaption(cap);
   };
 
+  useEffect(() => {
+    console.log("current init: ", init);
+    if (init === true) {
+      console.log(
+        "========================initializing stream chat with uid:",
+        user.id
+      );
+      async function init() {
+        const chatClient = StreamChat.getInstance(streamApiKey);
+        await chatClient
+          .connectUser(user, chatClient.devToken(user.id))
+          .then(console.log("===user connected"))
+          .catch((e) => console.log("===error", e));
+        const channel = chatClient.channel("messaging", channelName, {
+          name: `This is the channel for data transferring on ${channelName}`,
+        });
+        await channel.watch();
+
+        setStreamClient(chatClient);
+        setStreamChannel(channel);
+      }
+      init();
+      return () => streamClient.disconnectUser();
+    }
+  }, [init]);
+
+  // listen for new messages
+  useMessageNewListener((event) => {
+    console.log("New message received:", event.message.text);
+    handleCaption(event.message.text);
+  });
+
+  // set interval for screenshot every 1 second
   useEffect(() => {
     if (option === "gesture") {
       intervalRef.current = setInterval(() => {
@@ -62,6 +130,7 @@ export const VideoCall = ({ option }) => {
     }
   }, [localCameraTrack]);
 
+  // initialize the media pipe gesture recognizer
   useEffect(() => {
     if (option === "gesture") {
       const initializeGestureRecognizer = async () => {
@@ -89,6 +158,7 @@ export const VideoCall = ({ option }) => {
     }
   }, [isModelLoaded]);
 
+  // join the agora call
   useJoin(
     {
       appid: appId,
@@ -98,8 +168,10 @@ export const VideoCall = ({ option }) => {
     activeConnection
   );
 
+  // publish local traces
   usePublish([localMicrophoneTrack, localCameraTrack]);
 
+  // take screenshot
   const takeScreenshot = () => {
     const remoteContainer = remoteContainerRef.current;
     if (!remoteContainer) return;
@@ -112,6 +184,7 @@ export const VideoCall = ({ option }) => {
     });
   };
 
+  // recognizing gesture
   const recognizeGesture = async (imgData) => {
     if (!gestureRecognizer || !imgData) {
       console.error("Gesture recognizer not loaded or image is null");
@@ -137,12 +210,13 @@ export const VideoCall = ({ option }) => {
   // audioTracks.forEach((track) => track.play());
   // videoTracks.forEach((track) => track.play());
 
+  // initialize speech
   useEffect(() => {
     if (option === "speech") {
       console.log("========================initializing speech");
       if (SpeechRecognition.browserSupportsSpeechRecognition()) {
         SpeechRecognition.startListening({ continuous: true });
-        console.log("========================listning started");
+        console.log("========================listening started");
       } else {
         console.log("========================speech recognition not supported");
       }
@@ -154,13 +228,20 @@ export const VideoCall = ({ option }) => {
     }
   }, []);
 
+  // updating caption based on speech recognition transcript
   useEffect(() => {
     if (transcript && option === "speech") {
       console.log("==================transcription changed", transcript);
       handleCaption(transcript);
+      if (streamChannel) {
+        streamChannel.sendMessage({
+          text: transcript,
+        });
+      }
     }
   }, [transcript]);
 
+  // returning loading if no option received
   if (!option) {
     return <div>Loading...</div>;
   }
