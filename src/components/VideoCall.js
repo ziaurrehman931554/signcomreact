@@ -31,10 +31,12 @@ import {
   useMessageNewListener,
 } from "stream-chat-react";
 import { StreamChat } from "stream-chat";
+import CustomMessageList from "./CustomMessageList";
 
 const appId = "5d4f500c39834c95ae5a04635a3f0ab8";
 const streamApiKey = "67wrrf287xk9";
 let user = { id: null, name: null };
+let count = 0;
 
 export const VideoCall = ({ option }) => {
   const { channelName } = useParams();
@@ -64,7 +66,7 @@ export const VideoCall = ({ option }) => {
   // assign agora current uid to user variable
   useEffect(() => {
     if (uid) {
-      console.log("===uid: ", uid);
+      console.log("===================================uid: ", uid);
       user.id = `u${uid}`;
       user.name = `User${uid}`;
       setInit(true);
@@ -77,46 +79,98 @@ export const VideoCall = ({ option }) => {
   // Suppress the error
   window.addEventListener("error", function (event) {
     if (event.message.includes("ERR_BLOCKED_BY_CLIENT")) {
+      console.log("===================================prevented default");
       event.preventDefault();
     }
   });
 
   // handle caption
   const handleCaption = (cap) => {
+    console.log(
+      "======================================handle caption called: ",
+      cap
+    );
     setCaption(cap);
   };
 
+  // initialize stream chat and joining channel and creating users
   useEffect(() => {
-    console.log("current init: ", init);
+    console.log("===============================current init: ", init);
     if (init === true) {
       console.log(
         "========================initializing stream chat with uid:",
         user.id
       );
+      let isInterrupted = false;
       async function init() {
         const chatClient = StreamChat.getInstance(streamApiKey);
+        console.log("============================chatClient: ", chatClient);
         await chatClient
-          .connectUser(user, chatClient.devToken(user.id))
-          .then(console.log("===user connected"))
-          .catch((e) => console.log("===error", e));
+          .connectUser(
+            { ...user, option: option },
+            chatClient.devToken(user.id)
+          )
+          .then(() => {
+            if (isInterrupted) return;
+            console.log("=======================user connected:", chatClient);
+            setStreamClient(chatClient);
+          })
+          .catch((e) =>
+            console.log("====================error while connecting", e)
+          );
         const channel = chatClient.channel("messaging", channelName, {
           name: `This is the channel for data transferring on ${channelName}`,
         });
+        console.log("======================================channel: ", channel);
         await channel.watch();
+        channel
+          .sendEvent({
+            type: "option-selected",
+            option: option,
+          })
+          .then(
+            console.log(
+              "============================event sent with option: ",
+              option
+            )
+          )
+          .catch((e) =>
+            console.log(
+              "=============================error while sending event message: ",
+              e
+            )
+          );
 
-        setStreamClient(chatClient);
         setStreamChannel(channel);
+        handleSendMessage("hello");
+        return () => {
+          isInterrupted = true;
+          chatClient.disconnectUser();
+          setStreamClient(undefined);
+        };
       }
       init();
-      return () => streamClient.disconnectUser();
     }
   }, [init]);
 
-  // listen for new messages
-  useMessageNewListener((event) => {
-    console.log("New message received:", event.message.text);
-    handleCaption(event.message.text);
-  });
+  // handle text events
+  const handleSendMessage = (msg) => {
+    console.log(
+      "=========================handle send message called with msg: ",
+      msg
+    );
+    if (streamChannel) {
+      console.log(
+        "================================stream channel available for send message"
+      );
+      streamChannel.sendMessage({
+        text: msg,
+      });
+      console.log("================================msg sent");
+    } else {
+      console.log("Stream channel is not initialized yet.");
+    }
+  };
 
   // set interval for screenshot every 1 second
   useEffect(() => {
@@ -212,32 +266,65 @@ export const VideoCall = ({ option }) => {
 
   // initialize speech
   useEffect(() => {
-    if (option === "speech") {
-      console.log("========================initializing speech");
-      if (SpeechRecognition.browserSupportsSpeechRecognition()) {
-        SpeechRecognition.startListening({ continuous: true });
-        console.log("========================listening started");
-      } else {
-        console.log("========================speech recognition not supported");
-      }
+    console.log(
+      "===========================init speech called with",
+      streamChannel
+    );
+    if (streamChannel) {
+      console.log(
+        "========================stream channel available for init speech"
+      );
+      const handleOptionSelected = (event) => {
+        console.log(
+          "============================event received with user: ",
+          event.user.id
+        );
+        if (event.user.id !== user.id && event.type === "option-selected") {
+          // Enable or disable speech recognition based on the option selected by the remote user
+          console.log(
+            "============================option received in init speech: ",
+            event.option
+          );
+          const remoteUserOption = event.option;
+          if (remoteUserOption === "speech") {
+            console.log(
+              "========================option matched and initiates speech recognition"
+            );
+            // Enable speech recognition for the local user
+            if (SpeechRecognition.browserSupportsSpeechRecognition()) {
+              SpeechRecognition.startListening({ continuous: true });
+              console.log("============================Listening started");
+              handleSendMessage(
+                "Now the caption of your speech will appear here"
+              );
+            } else {
+              console.log(
+                "==========================Speech recognition not supported"
+              );
+            }
+          } else {
+            // Stop speech recognition if the option is not speech
+            console.log("========================stopped speech recognition");
+            SpeechRecognition.stopListening();
+          }
+        }
+      };
+
+      streamChannel.on("option-selected", handleOptionSelected);
 
       return () => {
+        streamChannel.off("option-selected", handleOptionSelected);
         SpeechRecognition.stopListening();
-        resetTranscript();
       };
     }
-  }, []);
+  }, [streamChannel]);
 
   // updating caption based on speech recognition transcript
   useEffect(() => {
     if (transcript && option === "speech") {
       console.log("==================transcription changed", transcript);
       handleCaption(transcript);
-      if (streamChannel) {
-        streamChannel.sendMessage({
-          text: transcript,
-        });
-      }
+      handleSendMessage(transcript);
     }
   }, [transcript]);
 
@@ -252,7 +339,13 @@ export const VideoCall = ({ option }) => {
         <div className="bottom-container">
           <div className="capNCam">
             <div className="capContainer">
-              <p className="cap">{caption}</p>
+              {option === "gesture" && <p className="cap">{caption}</p>}
+              {streamChannel && option === "speech" && (
+                <CustomMessageList
+                  streamChannel={streamChannel}
+                  handleCaption={handleCaption}
+                />
+              )}
             </div>
             <div className="camContainer">
               <LocalUser
@@ -276,7 +369,8 @@ export const VideoCall = ({ option }) => {
               <div className="callControl">
                 <button
                   className="callBtn"
-                  onClick={() => {
+                  onClick={async () => {
+                    if (streamChannel) await streamChannel.truncate();
                     setActiveConnection(false);
                     navigate("/");
                   }}
