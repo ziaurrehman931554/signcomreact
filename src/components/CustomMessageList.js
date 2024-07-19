@@ -13,7 +13,7 @@ const CustomMessageList = ({ streamChannel, handleCaption }) => {
     };
 
     const handleNewMessage = (event) => {
-      setMessages((prevMessages) => [...prevMessages, event.message]);
+      setMessages((prevMessages) => [...prevMessages, event.message.text]);
       handleCaption(event.message.text);
     };
 

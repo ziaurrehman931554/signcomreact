@@ -34,7 +34,7 @@ import { StreamChat } from "stream-chat";
 import CustomMessageList from "./CustomMessageList";
 
 const appId = "5d4f500c39834c95ae5a04635a3f0ab8";
-const streamApiKey = "67wrrf287xk9";
+const streamApiKey = "dwfnpjnhfe4n";
 let user = { id: null, name: null };
 let count = 0;
 
@@ -152,6 +152,19 @@ export const VideoCall = ({ option }) => {
       init();
     }
   }, [init]);
+
+  // TODO: remove this function, sending hello msg after every 5 sec
+  useEffect(() => {
+    if (streamChannel && option === "gesture") {
+      console.log("=========================interval started");
+      const interval = setInterval(() => {
+        console.log("=========================hello message sent");
+        handleSendMessage(`=================Hello ${count}`);
+        count++;
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [streamChannel]);
 
   // handle text events
   const handleSendMessage = (msg) => {
