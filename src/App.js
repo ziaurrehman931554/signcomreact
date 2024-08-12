@@ -1,14 +1,16 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { ConnectForm } from "./components/ConnectForm";
 import { LiveVideo } from "./components/LiveVideo";
 
 import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
 
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
   const agoraClient = useRTCClient(
     AgoraRTC.createClient({ codec: "vp8", mode: "rtc" })
   ); // Initialize Agora Client
@@ -20,6 +22,15 @@ function App() {
     setSelectedOption(option);
     navigate(`/via/${channelName}`); // on form submit, navigate to new route
   };
+
+  useEffect(() => {
+    const postCurrentUrl = () => {
+      window.parent.postMessage({ url: window.location.href }, "*");
+    };
+
+    // Post the initial URL
+    postCurrentUrl();
+  }, [location]);
 
   return (
     <div className="main-container" style={{ height: window.innerHeight }}>

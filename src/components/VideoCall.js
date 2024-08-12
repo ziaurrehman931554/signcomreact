@@ -33,10 +33,11 @@ import {
 import { StreamChat } from "stream-chat";
 import CustomMessageList from "./CustomMessageList";
 
-const appId = "5d4f500c39834c95ae5a04635a3f0ab8";
+// const appId = "5d4f500c39834c95ae5a04635a3f0ab8"; // old account
+const appId = "7b076985665c4948af023280d8e7b683";
 const streamApiKey = "dwfnpjnhfe4n";
 let user = { id: null, name: null };
-let count = 0;
+// let count = 0;
 
 export const VideoCall = ({ option }) => {
   const { channelName } = useParams();
@@ -54,7 +55,7 @@ export const VideoCall = ({ option }) => {
   const [gestureRecognizer, setGestureRecognizer] = useState(null);
   const [isModelLoaded, setIsModelLoaded] = useState(false);
 
-  const [caption, setCaption] = useState("This is whee caption displays!");
+  const [caption, setCaption] = useState("This is where caption displays!");
   const { transcript, resetTranscript } = useSpeechRecognition();
 
   const [streamClient, setStreamClient] = useState(null);
@@ -154,17 +155,17 @@ export const VideoCall = ({ option }) => {
   }, [init]);
 
   // TODO: remove this function, sending hello msg after every 5 sec
-  useEffect(() => {
-    if (streamChannel && option === "gesture") {
-      console.log("=========================interval started");
-      const interval = setInterval(() => {
-        console.log("=========================hello message sent");
-        handleSendMessage(`=================Hello ${count}`);
-        count++;
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [streamChannel]);
+  // useEffect(() => {
+  //   if (streamChannel && option === "gesture") {
+  //     console.log("=========================interval started");
+  //     const interval = setInterval(() => {
+  //       console.log("=========================hello message sent");
+  //       handleSendMessage(`=================Hello ${count}`);
+  //       count++;
+  //     }, 5000);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [streamChannel]);
 
   // handle text events
   const handleSendMessage = (msg) => {
