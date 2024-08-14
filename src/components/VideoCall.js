@@ -20,9 +20,7 @@ import {
   GestureRecognizer,
   FilesetResolver,
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
-import SpeechRecognition, {
-  useSpeechRecognition,
-} from "react-speech-recognition";
+
 import {
   Chat,
   Channel,
@@ -32,6 +30,7 @@ import {
 } from "stream-chat-react";
 import { StreamChat } from "stream-chat";
 import CustomMessageList from "./CustomMessageList";
+import useSpeechToText from "./hooks/useSpeechToText";
 
 // const appId = "5d4f500c39834c95ae5a04635a3f0ab8"; // old account
 const appId = "7b076985665c4948af023280d8e7b683";
@@ -56,13 +55,19 @@ export const VideoCall = ({ option }) => {
   const [isModelLoaded, setIsModelLoaded] = useState(false);
 
   const [caption, setCaption] = useState("This is where caption displays!");
-  const { transcript, resetTranscript } = useSpeechRecognition();
+  const { isListening, transcript, startListening, stopListening } =
+    useSpeechToText({ continuous: true });
 
   const [streamClient, setStreamClient] = useState(null);
   const [streamChannel, setStreamChannel] = useState(null);
 
   const [init, setInit] = useState(false);
   const uid = useCurrentUID();
+
+  // toggle speech listening
+  const startStopListening = () => {
+    isListening ? stopListening() : startListening();
+  };
 
   // assign agora current uid to user variable
   useEffect(() => {
@@ -300,26 +305,13 @@ export const VideoCall = ({ option }) => {
             event.option
           );
           const remoteUserOption = event.option;
-          if (remoteUserOption === "speech") {
-            console.log(
-              "========================option matched and initiates speech recognition"
-            );
-            // Enable speech recognition for the local user
-            if (SpeechRecognition.browserSupportsSpeechRecognition()) {
-              SpeechRecognition.startListening({ continuous: true });
-              console.log("============================Listening started");
-              handleSendMessage(
-                "Now the caption of your speech will appear here"
-              );
-            } else {
-              console.log(
-                "==========================Speech recognition not supported"
-              );
-            }
+          if (remoteUserOption === "speech" && !isListening) {
+            console.log("==============speech enabled for remote user");
+            startListening();
           } else {
             // Stop speech recognition if the option is not speech
             console.log("========================stopped speech recognition");
-            SpeechRecognition.stopListening();
+            stopListening();
           }
         }
       };
@@ -328,7 +320,7 @@ export const VideoCall = ({ option }) => {
 
       return () => {
         streamChannel.off("option-selected", handleOptionSelected);
-        SpeechRecognition.stopListening();
+        stopListening();
       };
     }
   }, [streamChannel]);
