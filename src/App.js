@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { ConnectForm } from "./components/ConnectForm";
@@ -7,6 +8,7 @@ import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
 
 import "./App.css";
 import { useEffect, useState } from "react";
+import { VideoCall } from "./components/VideoCall";
 
 function App() {
   const navigate = useNavigate();
@@ -15,12 +17,12 @@ function App() {
     AgoraRTC.createClient({ codec: "vp8", mode: "rtc" })
   ); // Initialize Agora Client
 
-  const [selectedOption, setSelectedOption] = useState("");
+  const [option, setOption] = useState("");
 
   const handleConnect = (channelName, option) => {
     console.log("==========================Received option: ", option);
-    setSelectedOption(option);
-    navigate(`/via/${channelName}`); // on form submit, navigate to new route
+    setOption(option);
+    navigate(`/via/${channelName}/${option}`); // on form submit, navigate to new route
   };
 
   useEffect(() => {
@@ -41,10 +43,18 @@ function App() {
             element={<ConnectForm connectToVideo={handleConnect} />}
           />
           <Route
-            path="/via/:channelName"
+            path="/via/:channelName/:option"
             element={
               <AgoraRTCProvider client={agoraClient}>
-                <LiveVideo option={selectedOption} />
+                <VideoCall />
+              </AgoraRTCProvider>
+            }
+          />
+          <Route
+            path="/via/:channelName/"
+            element={
+              <AgoraRTCProvider client={agoraClient}>
+                <LiveVideo connectToVideo={handleConnect} />
               </AgoraRTCProvider>
             }
           />

@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import "./ConnectForm.css";
-import join from "../assets/join.png";
-import generate from "../assets/generate.png";
+import join from "../assets/incoming_b.png";
+import generate from "../assets/outgoing_b.png";
 
 export const ConnectForm = ({ connectToVideo }) => {
   const [channelName, setChannelName] = useState("");
@@ -34,7 +35,7 @@ export const ConnectForm = ({ connectToVideo }) => {
     setShowOptions(false);
     console.log(
       "==================================calling for video component: ",
-      option
+      selectedOption
     );
     connectToVideo(channelName, selectedOption);
   };

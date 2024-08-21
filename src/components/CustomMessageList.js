@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const CustomMessageList = ({ streamChannel, handleCaption }) => {
+const CustomMessageList = ({ streamChannel, handleCaption, caption }) => {
   const [messages, setMessages] = useState([]);
+  const messageEndRef = useRef(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -13,8 +15,13 @@ const CustomMessageList = ({ streamChannel, handleCaption }) => {
     };
 
     const handleNewMessage = (event) => {
-      setMessages((prevMessages) => [...prevMessages, event.message.text]);
+      setMessages((prevMessages) => [...prevMessages, event.message]);
       handleCaption(event.message.text);
+      scrollToBottom();
+    };
+
+    const scrollToBottom = () => {
+      messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     fetchMessages();
@@ -29,9 +36,11 @@ const CustomMessageList = ({ streamChannel, handleCaption }) => {
 
   return (
     <div className="message-list">
+      {/* {caption} */}
       {messages.map((msg) => (
         <p key={msg.id}>{msg.text}</p>
       ))}
+      <div ref={messageEndRef} />
     </div>
   );
 };

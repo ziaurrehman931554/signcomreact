@@ -23,9 +23,6 @@ export default function useSpeechToText(options) {
     recognition.continuous = options.continuous || false;
 
     if ("webkitSpeechGrammarList" in window) {
-      console.log(
-        "---------------------------------grammars available in window"
-      );
       const grammar =
         "#JSGF v1.0; grammar punctuation; public <punc> = . | ,| ? | ! | ; | : ;";
       const speechRecognitionList = new window.webkitSpeechGrammarList();
@@ -34,13 +31,13 @@ export default function useSpeechToText(options) {
     }
 
     recognition.onresult = (event) => {
-      console.log(
-        "----------------------Speech recognition result: ",
-        event.results
-      );
       let text = "";
       for (let i = 0; i < event.results.length; i++) {
         text += event.results[i][0].transcript;
+        console.log(
+          "----------------------Speech recognition result: ",
+          event.results[i][0].transcript
+        );
       }
       setTranscript(text);
     };
@@ -50,6 +47,16 @@ export default function useSpeechToText(options) {
         "--------------------------Speech recognition error: ",
         event.error
       );
+      if (event.error === "no-speech") {
+        console.log(
+          "--------------------------No speech detected, restarting..."
+        );
+        // Delay restarting to ensure the current recognition session is completely stopped
+        recognition.stop();
+        setTimeout(() => {
+          startListening();
+        }, 2000); // Adjust delay as needed
+      }
     };
 
     recognition.onend = () => {
@@ -64,7 +71,6 @@ export default function useSpeechToText(options) {
   }, []);
 
   const startListening = () => {
-    console.log("-----------------------start listening called");
     if (recognitionRef.current && !isListening) {
       console.log("--------------------------started speech recognition");
       recognitionRef.current.start();
@@ -73,7 +79,6 @@ export default function useSpeechToText(options) {
   };
 
   const stopListening = () => {
-    console.log("--------------------------stop listening called");
     if (recognitionRef.current && isListening) {
       console.log("--------------------------stopped speech recognition");
       recognitionRef.current.stop();

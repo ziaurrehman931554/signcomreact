@@ -32,14 +32,19 @@ import { StreamChat } from "stream-chat";
 import CustomMessageList from "./CustomMessageList";
 import useSpeechToText from "./hooks/useSpeechToText";
 
+import mic_off from "../assets/mic_off.png";
+import mic_on from "../assets/mic_on.png";
+import call_end from "../assets/call_end.png";
+import camera_switch from "../assets/camera_switch.png";
+
 // const appId = "5d4f500c39834c95ae5a04635a3f0ab8"; // old account
 const appId = "7b076985665c4948af023280d8e7b683";
 const streamApiKey = "dwfnpjnhfe4n";
 let user = { id: null, name: null };
 // let count = 0;
 
-export const VideoCall = ({ option }) => {
-  const { channelName } = useParams();
+export const VideoCall = () => {
+  const { channelName, option } = useParams();
   const [activeConnection, setActiveConnection] = useState(true);
 
   const [micOn, setMic] = useState(true);
@@ -268,7 +273,7 @@ export const VideoCall = ({ option }) => {
 
     img.onload = async () => {
       const results = await gestureRecognizer.recognize(img);
-      console.log("====================== results", results);
+      // console.log("====================== results", results);
       if (results.gestures.length > 0) {
         const categoryName = results.gestures[0][0].categoryName;
         handleCaption(categoryName);
@@ -285,49 +290,37 @@ export const VideoCall = ({ option }) => {
 
   // initialize speech
   useEffect(() => {
-    console.log(
-      "===========================init speech called with",
-      streamChannel
-    );
-    if (streamChannel) {
-      console.log(
-        "========================stream channel available for init speech"
-      );
-      const handleOptionSelected = (event) => {
-        console.log(
-          "============================event received with user: ",
-          event.user.id
-        );
-        if (event.user.id !== user.id && event.type === "option-selected") {
-          // Enable or disable speech recognition based on the option selected by the remote user
-          console.log(
-            "============================option received in init speech: ",
-            event.option
-          );
-          const remoteUserOption = event.option;
-          if (remoteUserOption === "speech" && !isListening) {
-            console.log("==============speech enabled for remote user");
-            startListening();
-          } else {
-            // Stop speech recognition if the option is not speech
-            console.log("========================stopped speech recognition");
-            stopListening();
-          }
-        }
-      };
+    // if (streamChannel) {
+    //   const handleOptionSelected = (event) => {
+    //     if (event.user.id !== user.id && event.type === "option-selected") {
+    //       // Enable or disable speech recognition based on the option selected by the remote user
+    //       const remoteUserOption = event.option;
+    //       if (remoteUserOption === "speech" && !isListening) {
+    //         console.log("==============speech enabled for remote user");
+    //         startListening();
+    //       }
+    //     }
+    //   };
 
-      streamChannel.on("option-selected", handleOptionSelected);
+    //   streamChannel.on("option-selected", handleOptionSelected);
 
-      return () => {
-        streamChannel.off("option-selected", handleOptionSelected);
-        stopListening();
-      };
+    //   return () => {
+    //     streamChannel.off("option-selected", handleOptionSelected);
+    //     stopListening();
+    //   };
+    // }
+
+    // TODO: remove when testing complete
+    if (streamChannel && option === "gesture") {
+      console.log("===================starting speech from use effect ");
+      startListening();
+      return () => stopListening();
     }
   }, [streamChannel]);
 
   // updating caption based on speech recognition transcript
   useEffect(() => {
-    if (transcript && option === "speech") {
+    if (transcript) {
       console.log("==================transcription changed", transcript);
       handleCaption(transcript);
       handleSendMessage(transcript);
@@ -350,6 +343,7 @@ export const VideoCall = ({ option }) => {
                 <CustomMessageList
                   streamChannel={streamChannel}
                   handleCaption={handleCaption}
+                  caption={caption}
                 />
               )}
             </div>
@@ -369,7 +363,23 @@ export const VideoCall = ({ option }) => {
             <div className="micCallCamControl">
               <div className="micControl">
                 <button className="btn" onClick={() => setMic((a) => !a)}>
-                  🎙️
+                  {micOn ? (
+                    <img
+                      src={mic_on}
+                      alt="🎙️"
+                      width={30}
+                      height={30}
+                      className="img"
+                    />
+                  ) : (
+                    <img
+                      src={mic_off}
+                      alt="🎙️"
+                      width={30}
+                      height={30}
+                      className="img"
+                    />
+                  )}
                 </button>
               </div>
               <div className="callControl">
@@ -381,12 +391,24 @@ export const VideoCall = ({ option }) => {
                     navigate("/");
                   }}
                 >
-                  {activeConnection ? "📞" : "📞"}
+                  <img
+                    src={call_end}
+                    alt="📞"
+                    className="img"
+                    width={50}
+                    height={50}
+                  />
                 </button>
               </div>
               <div className="camControl">
                 <button className="btn" onClick={() => setCamera((a) => !a)}>
-                  📷
+                  <img
+                    src={camera_switch}
+                    alt="📷"
+                    width={30}
+                    height={30}
+                    className="img"
+                  />
                 </button>
               </div>
             </div>
