@@ -16,7 +16,7 @@ const CustomMessageList = ({ streamChannel, handleCaption, caption }) => {
 
     const handleNewMessage = (event) => {
       setMessages((prevMessages) => [...prevMessages, event.message]);
-      handleCaption(event.message.text);
+      // handleCaption(event.message.text);
       scrollToBottom();
     };
 

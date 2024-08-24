@@ -290,39 +290,39 @@ export const VideoCall = () => {
 
   // initialize speech
   useEffect(() => {
-    // if (streamChannel) {
-    //   const handleOptionSelected = (event) => {
-    //     if (event.user.id !== user.id && event.type === "option-selected") {
-    //       // Enable or disable speech recognition based on the option selected by the remote user
-    //       const remoteUserOption = event.option;
-    //       if (remoteUserOption === "speech" && !isListening) {
-    //         console.log("==============speech enabled for remote user");
-    //         startListening();
-    //       }
-    //     }
-    //   };
+    if (streamChannel) {
+      const handleOptionSelected = (event) => {
+        if (event.user.id !== user.id && event.type === "option-selected") {
+          // Enable or disable speech recognition based on the option selected by the remote user
+          const remoteUserOption = event.option;
+          if (remoteUserOption === "speech" && !isListening) {
+            console.log("==============speech enabled for remote user");
+            startListening();
+          }
+        }
+      };
 
-    //   streamChannel.on("option-selected", handleOptionSelected);
+      streamChannel.on("option-selected", handleOptionSelected);
 
-    //   return () => {
-    //     streamChannel.off("option-selected", handleOptionSelected);
-    //     stopListening();
-    //   };
-    // }
+      return () => {
+        streamChannel.off("option-selected", handleOptionSelected);
+        stopListening();
+      };
+    }
 
     // TODO: remove when testing complete
-    if (streamChannel && option === "gesture") {
-      console.log("===================starting speech from use effect ");
-      startListening();
-      return () => stopListening();
-    }
+    // if (streamChannel && option === "gesture") {
+    //   console.log("===================starting speech from use effect ");
+    //   startListening();
+    //   return () => stopListening();
+    // }
   }, [streamChannel]);
 
   // updating caption based on speech recognition transcript
   useEffect(() => {
     if (transcript) {
       console.log("==================transcription changed", transcript);
-      handleCaption(transcript);
+      // handleCaption(transcript);
       handleSendMessage(transcript);
     }
   }, [transcript]);
@@ -420,6 +420,7 @@ export const VideoCall = () => {
             ref={remoteContainerRef}
             style={{
               height: window.innerHeight - (window.innerHeight * 25) / 100,
+              maxWidth: 370,
             }}
           >
             {
